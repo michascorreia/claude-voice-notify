@@ -23,8 +23,27 @@ Uses Microsoft Edge TTS (free, no account needed) with neural voices — **Franc
 
 ## Install
 
+### Option 1 — Claude Code plugin (recommended)
+
+In any Claude Code session:
+
+```
+/plugin marketplace add michascorreia/claude-voice-notify
+/plugin install voice-notify@michascorreia-claude-voice-notify
+```
+
+Then run the setup (creates venv, generates audio, patches settings):
+
 ```bash
-git clone https://github.com/PopcodeMobile/claude-voice-notify.git
+cd ~/.claude/plugins/voice-notify && ./install.sh
+```
+
+Restart Claude Code or open a new session.
+
+### Option 2 — Manual (clone anywhere)
+
+```bash
+git clone https://github.com/michascorreia/claude-voice-notify.git
 cd claude-voice-notify
 ./install.sh
 ```
@@ -105,4 +124,4 @@ This removes the hooks from `~/.claude/settings.json`. Audio files and the venv 
 
 ## License
 
-MIT © [PopcodeMobile](https://github.com/PopcodeMobile)
+MIT © [michascorreia](https://github.com/michascorreia)

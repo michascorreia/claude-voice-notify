@@ -1,0 +1,12 @@
+{
+  "plugins": {
+    "voice-notify": {
+      "source": {
+        "source": "github",
+        "repo": "michascorreia/claude-voice-notify"
+      },
+      "version": "1.0.0",
+      "description": "Voice notifications for Claude Code — speaks when builds, tests, deploys and migrations complete. Alerts destructive actions. Supports pt-BR and en-US."
+    }
+  }
+}
