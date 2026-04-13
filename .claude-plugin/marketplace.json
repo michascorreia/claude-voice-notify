@@ -10,11 +10,7 @@
       "name": "claude-voice-notify",
       "description": "Voice notifications for Claude Code — speaks when builds, tests, deploys and migrations complete. Alerts destructive actions. Supports pt-BR and en-US.",
       "category": "productivity",
-      "source": {
-        "source": "url",
-        "url": "https://github.com/michascorreia/claude-voice-notify.git",
-        "sha": "c3d644e8def3c0eff17a36911b48352048d5e0f0"
-      },
+      "source": "./",
       "homepage": "https://github.com/michascorreia/claude-voice-notify"
     }
   ]
