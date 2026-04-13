@@ -1,12 +1,18 @@
 {
-  "plugins": {
-    "voice-notify": {
-      "source": {
-        "source": "github",
-        "repo": "michascorreia/claude-voice-notify"
-      },
+  "name": "michascorreia",
+  "owner": {
+    "name": "Michael Correia"
+  },
+  "metadata": {
+    "description": "Plugins by Michael Correia (michascorreia)",
+    "homepage": "https://github.com/michascorreia/claude-voice-notify"
+  },
+  "plugins": [
+    {
+      "name": "claude-voice-notify",
       "version": "1.0.0",
+      "source": "./",
       "description": "Voice notifications for Claude Code — speaks when builds, tests, deploys and migrations complete. Alerts destructive actions. Supports pt-BR and en-US."
     }
-  }
+  ]
 }
