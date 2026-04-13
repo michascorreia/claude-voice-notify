@@ -4,9 +4,19 @@ description: Configure voice notifications — toggle categories (basic, task do
 
 You are helping the user configure the **claude-voice-notify** plugin.
 
+## Setup
+
+Resolve the data directory once at the start:
+
+```bash
+DATA_DIR="${CLAUDE_PLUGIN_DATA:-$HOME/.claude/plugins/data/claude-voice-notify-michascorreia}"
+```
+
+Use `$DATA_DIR` throughout (not `$DATA_DIR`) because the env var may not be set when a skill runs.
+
 ## Steps
 
-1. **Read the current config** from `${CLAUDE_PLUGIN_DATA}/config.json`. If the file doesn't exist, use these defaults:
+1. **Read the current config** from `$DATA_DIR/config.json`. If the file doesn't exist, use these defaults:
    ```json
    {
      "lang": "pt-BR",
@@ -49,14 +59,14 @@ You are helping the user configure the **claude-voice-notify** plugin.
    - Loop back to step 2 showing updated state until the user saves or cancels
 
 4. **When saving**:
-   - Ensure `${CLAUDE_PLUGIN_DATA}` directory exists (`mkdir -p`)
-   - Write the JSON to `${CLAUDE_PLUGIN_DATA}/config.json` with 2-space indentation
+   - Ensure `$DATA_DIR` directory exists (`mkdir -p`)
+   - Write the JSON to `$DATA_DIR/config.json` with 2-space indentation
    - Confirm to the user: "✓ Configuração salva. As mudanças valem pra nova sessão do Claude Code."
-   - If `project_name` was just enabled but `${CLAUDE_PLUGIN_DATA}/project-name-enabled` doesn't exist, tell the user: "⚠️ Pra usar nome do projeto, rode `/voice-notify-setup` (instala Python + edge-tts)."
+   - If `project_name` was just enabled but `$DATA_DIR/project-name-enabled` doesn't exist, tell the user: "⚠️ Pra usar nome do projeto, rode `/voice-notify-setup` (instala Python + edge-tts)."
 
 ## Important
 
 - Read/write files using the Bash tool (`cat`, `mkdir -p`, write JSON with `python3 -c`).
 - Map keys: 1=basic, 2=task_done, 3=build, 4=git, 5=alerts, 6=project_name.
 - Keep the UI in Portuguese (Brazilian) by default; switch to English if the user's language preference is en-US.
-- Never modify anything outside `${CLAUDE_PLUGIN_DATA}`.
+- Never modify anything outside `$DATA_DIR`.

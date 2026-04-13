@@ -9,20 +9,25 @@ PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && p
 PLUGIN_DATA="${CLAUDE_PLUGIN_DATA:-$PLUGIN_ROOT}"
 CONFIG_FILE="$PLUGIN_DATA/config.json"
 
-# feature_enabled <feature_name> <default_bool>
+# feature_enabled <feature_name> <default_bool: "true"|"false">
 feature_enabled() {
   local name="$1"
-  local default="$2"
-  [ ! -f "$CONFIG_FILE" ] && { [ "$default" = "true" ] && return 0 || return 1; }
-  python3 -c "
-import json, sys
+  local default_bool="$2"
+  local default_exit=1 default_py="False"
+  if [ "$default_bool" = "true" ]; then default_exit=0; default_py="True"; fi
+
+  [ ! -f "$CONFIG_FILE" ] && return $default_exit
+
+  CONFIG_FILE="$CONFIG_FILE" FEATURE="$name" DEFAULT="$default_py" python3 <<'PY'
+import json, os, sys
+cfg, name, default = os.environ['CONFIG_FILE'], os.environ['FEATURE'], os.environ['DEFAULT']
 try:
-    d = json.load(open('$CONFIG_FILE'))
-    v = d.get('features', {}).get('$name', $([ "$default" = "true" ] && echo "True" || echo "False"))
+    d = json.load(open(cfg))
+    v = d.get('features', {}).get(name, default == 'True')
     sys.exit(0 if v else 1)
 except Exception:
-    sys.exit(0 if '$default' == 'true' else 1)
-"
+    sys.exit(0 if default == 'True' else 1)
+PY
 }
 
 INPUT=$(cat)

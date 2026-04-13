@@ -4,6 +4,17 @@ description: Install edge-tts in the plugin data dir so voice-notify can speak p
 
 You are helping the user install the optional **project name** feature of `claude-voice-notify`. This uses Microsoft Edge TTS (free, neural voices) to say the project name before each notification.
 
+## Setup
+
+Resolve paths once at the start:
+
+```bash
+DATA_DIR="${CLAUDE_PLUGIN_DATA:-$HOME/.claude/plugins/data/claude-voice-notify-michascorreia}"
+ROOT_DIR="${CLAUDE_PLUGIN_ROOT:-$HOME/.claude/plugins/cache/michascorreia/claude-voice-notify/1.0.0}"
+```
+
+Use `$DATA_DIR` and `$ROOT_DIR` throughout.
+
 ## Steps
 
 1. **Explain what will happen** and confirm:
@@ -16,21 +27,21 @@ You are helping the user install the optional **project name** feature of `claud
    ```
    If none found or version < 3.10, tell the user: "❌ Python 3.10+ não encontrado. Instale com: `brew install python@3.12`" and stop.
 
-3. **Create venv and install edge-tts** inside `${CLAUDE_PLUGIN_DATA}` (persistent across plugin updates):
+3. **Create venv and install edge-tts** inside `$DATA_DIR` (persistent across plugin updates):
    ```bash
-   VENV="${CLAUDE_PLUGIN_DATA}/.venv"
-   mkdir -p "${CLAUDE_PLUGIN_DATA}"
+   VENV="$DATA_DIR/.venv"
+   mkdir -p "$DATA_DIR"
    python3 -m venv "$VENV"
    "$VENV/bin/pip" install -q --upgrade pip
    "$VENV/bin/pip" install -q edge-tts
    ```
 
 4. **Enable the feature flags**:
-   - Touch the flag file: `touch "${CLAUDE_PLUGIN_DATA}/project-name-enabled"`
-   - Update `${CLAUDE_PLUGIN_DATA}/config.json` — set `features.project_name = true` (preserve other fields; create file with defaults if absent).
+   - Touch the flag file: `touch "$DATA_DIR/project-name-enabled"`
+   - Update `$DATA_DIR/config.json` — set `features.project_name = true` (preserve other fields; create file with defaults if absent).
 
 5. **Copy aliases example** so the user can customize project names:
-   - If `${CLAUDE_PLUGIN_DATA}/projects/aliases.txt` doesn't exist, copy `${CLAUDE_PLUGIN_ROOT}/audio/projects/aliases.example.txt` to it.
+   - If `$DATA_DIR/projects/aliases.txt` doesn't exist, copy `$ROOT_DIR/audio/projects/aliases.example.txt` to it.
    - Show the path and tell the user: "Edite esse arquivo pra customizar como o nome sai falado (ex: `meu-repo=Meu Projeto`)."
 
 6. **Confirm** to the user:
@@ -38,6 +49,6 @@ You are helping the user install the optional **project name** feature of `claud
 
 ## Notes
 
-- Always use `${CLAUDE_PLUGIN_DATA}` (NOT `${CLAUDE_PLUGIN_ROOT}`). The venv must survive plugin updates.
+- Always use `$DATA_DIR` (NOT `$ROOT_DIR`). The venv must survive plugin updates.
 - Never run `pip install` outside the venv.
 - If pip install fails (no internet, etc), report the error and leave no half-state.
