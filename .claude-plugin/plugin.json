@@ -1,17 +1,12 @@
 {
   "name": "claude-voice-notify",
   "version": "1.0.0",
-  "description": "Voice notifications for Claude Code — speaks when builds, tests, deploys and migrations complete. Alerts for destructive actions. Supports pt-BR and en-US.",
-  "author": "michascorreia",
-  "license": "MIT",
+  "description": "Voice notifications for Claude Code — speaks when builds, tests, deploys and migrations complete. Alerts destructive actions. Supports pt-BR and en-US.",
+  "author": {
+    "name": "Michael Correia",
+    "url": "https://github.com/michascorreia"
+  },
   "repository": "https://github.com/michascorreia/claude-voice-notify",
-  "keywords": ["voice", "tts", "notifications", "hooks", "productivity"],
-  "install": "install.sh",
-  "uninstall": "uninstall.sh",
-  "hooks": {
-    "PostToolUse": "hooks/voice-notify.sh",
-    "PreToolUse": "hooks/voice-alert.sh",
-    "PostCompact": "hooks/voice-compact.sh",
-    "Notification": "hooks/voice-attention.sh"
-  }
+  "license": "MIT",
+  "keywords": ["voice", "tts", "notifications", "hooks", "productivity", "pt-BR", "en-US"]
 }
