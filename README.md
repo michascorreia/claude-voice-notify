@@ -28,7 +28,7 @@ That's it. After restarting Claude Code (or running `/reload-plugins`), the plug
 - Claude **finishes** a task (short "Pronto." / "Done.")
 - Context is **compacted** automatically
 
-**macOS only** (uses `afplay`).
+**Platforms:** macOS (uses `afplay`, zero deps), Linux (needs one of `ffplay`/`mpg123`/`paplay`/`aplay`), Windows (needs Git Bash + Windows 10/11 — uses Windows Media Player via PowerShell).
 
 ## Configure
 
@@ -106,13 +106,13 @@ Edit `hooks/voice-notify.sh` or `hooks/voice-alert.sh` to add more.
 - 🎧 Working in a quiet enough environment to hear a short cue
 
 **Not a fit:**
-- Linux/Windows users (for now)
 - Anyone always wearing headphones with loud music
 - People who find TTS voices annoying (personal preference)
+- Linux without any audio player installed (`ffplay`, `mpg123`, `paplay`, or `aplay`)
 
 ## Limitations (honest)
 
-- **macOS only.** `afplay` is the player. Linux/Windows support would require abstracting the player and shipping additional audio formats — not done yet.
+- **Player depends on the OS.** macOS uses `afplay` (built in). Linux falls back to `ffplay`/`mpg123`/`paplay`/`aplay` in that order — if none are installed, nothing plays. Windows uses the WMPlayer COM object via PowerShell (Git Bash required to run the bash hooks).
 - **No visual fallback.** If you can't hear it, you miss it. There's no system notification fallback.
 - **Can become noise if you enable everything.** Start minimal; only enable more categories if you actively miss them.
 - **First-time "project name" generation costs ~2-3s** and needs internet (Microsoft Edge TTS). After that, it's cached.
