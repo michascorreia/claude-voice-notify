@@ -5,6 +5,15 @@
 
 [ "$VOICE_NOTIFY_OFF" = "1" ] && exit 0
 
+# play_audio <file> — cross-platform: afplay (macOS) or ffplay (Linux)
+play_audio() {
+  if command -v afplay >/dev/null 2>&1; then
+    afplay "$1" >/dev/null 2>&1
+  elif command -v ffplay >/dev/null 2>&1; then
+    ffplay -nodisp -autoexit -loglevel quiet "$1" >/dev/null 2>&1
+  fi
+}
+
 INPUT=$(cat)
 TOOL_NAME=$(echo "$INPUT" | python3 -c "import sys,json; print(json.load(sys.stdin).get('tool_name',''))" 2>/dev/null)
 [ "$TOOL_NAME" != "Bash" ] && exit 0
@@ -78,9 +87,9 @@ if [ "$PROJ_ENABLED" = "True" ] && [ -f "$PLUGIN_DATA/project-name-enabled" ] &&
 fi
 
 if [ -n "$PROJ_AUDIO" ] && [ -f "$PROJ_AUDIO" ]; then
-  (afplay "$PROJ_AUDIO" >/dev/null 2>&1; afplay "$AUDIO" >/dev/null 2>&1) &
+  (play_audio "$PROJ_AUDIO"; play_audio "$AUDIO") &
 else
-  afplay "$AUDIO" >/dev/null 2>&1 &
+  play_audio "$AUDIO" &
 fi
 
 exit 0

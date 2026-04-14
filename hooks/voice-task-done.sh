@@ -4,6 +4,15 @@
 
 [ "$VOICE_NOTIFY_OFF" = "1" ] && exit 0
 
+# play_audio <file> — cross-platform: afplay (macOS) or ffplay (Linux)
+play_audio() {
+  if command -v afplay >/dev/null 2>&1; then
+    afplay "$1" >/dev/null 2>&1
+  elif command -v ffplay >/dev/null 2>&1; then
+    ffplay -nodisp -autoexit -loglevel quiet "$1" >/dev/null 2>&1
+  fi
+}
+
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 PLUGIN_DATA="${CLAUDE_PLUGIN_DATA:-$PLUGIN_ROOT}"
 
@@ -24,6 +33,6 @@ fi
 [ -z "$LANG_CODE" ] && LANG_CODE="pt-BR"
 
 AUDIO="$PLUGIN_ROOT/audio/$LANG_CODE/task_done.m4a"
-[ -f "$AUDIO" ] && afplay "$AUDIO" >/dev/null 2>&1 &
+[ -f "$AUDIO" ] && play_audio "$AUDIO" &
 
 exit 0
