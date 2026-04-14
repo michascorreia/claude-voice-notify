@@ -20,7 +20,7 @@ feature_enabled() {
 
   [ ! -f "$CONFIG_FILE" ] && return $default_exit
 
-  CONFIG_FILE="$CONFIG_FILE" FEATURE="$name" DEFAULT="$default_py" python3 <<'PY'
+  CONFIG_FILE="$CONFIG_FILE" FEATURE="$name" DEFAULT="$default_py" "$VN_PY" <<'PY'
 import json, os, sys
 cfg, name, default = os.environ['CONFIG_FILE'], os.environ['FEATURE'], os.environ['DEFAULT']
 try:
@@ -33,13 +33,13 @@ PY
 }
 
 INPUT=$(cat)
-TOOL_NAME=$(echo "$INPUT" | python3 -c "import sys,json; print(json.load(sys.stdin).get('tool_name',''))" 2>/dev/null)
+TOOL_NAME=$(echo "$INPUT" | "$VN_PY" -c "import sys,json; print(json.load(sys.stdin).get('tool_name',''))" 2>/dev/null)
 [ "$TOOL_NAME" != "Bash" ] && exit 0
 
-COMMAND=$(echo "$INPUT" | python3 -c "import sys,json; print(json.load(sys.stdin).get('tool_input',{}).get('command',''))" 2>/dev/null)
-IS_ERROR=$(echo "$INPUT" | python3 -c "import sys,json; print(json.load(sys.stdin).get('tool_response',{}).get('isError', False))" 2>/dev/null)
-INTERRUPTED=$(echo "$INPUT" | python3 -c "import sys,json; print(json.load(sys.stdin).get('tool_response',{}).get('interrupted', False))" 2>/dev/null)
-CWD=$(echo "$INPUT" | python3 -c "import sys,json; print(json.load(sys.stdin).get('cwd',''))" 2>/dev/null)
+COMMAND=$(echo "$INPUT" | "$VN_PY" -c "import sys,json; print(json.load(sys.stdin).get('tool_input',{}).get('command',''))" 2>/dev/null)
+IS_ERROR=$(echo "$INPUT" | "$VN_PY" -c "import sys,json; print(json.load(sys.stdin).get('tool_response',{}).get('isError', False))" 2>/dev/null)
+INTERRUPTED=$(echo "$INPUT" | "$VN_PY" -c "import sys,json; print(json.load(sys.stdin).get('tool_response',{}).get('interrupted', False))" 2>/dev/null)
+CWD=$(echo "$INPUT" | "$VN_PY" -c "import sys,json; print(json.load(sys.stdin).get('cwd',''))" 2>/dev/null)
 
 [ "$INTERRUPTED" = "True" ] && exit 0
 
@@ -75,7 +75,7 @@ feature_enabled "$CATEGORY" "false" || exit 0
 # Language
 LANG_CODE="${CLAUDE_PLUGIN_OPTION_LANG:-}"
 if [ -z "$LANG_CODE" ] && [ -f "$CONFIG_FILE" ]; then
-  LANG_CODE=$(python3 -c "import json; print(json.load(open('$CONFIG_FILE')).get('lang',''))" 2>/dev/null)
+  LANG_CODE=$("$VN_PY" -c "import json; print(json.load(open('$CONFIG_FILE')).get('lang',''))" 2>/dev/null)
 fi
 if [ -z "$LANG_CODE" ] && [ -f "$PLUGIN_ROOT/config.txt" ]; then
   LANG_CODE=$(grep -E "^LANG=" "$PLUGIN_ROOT/config.txt" 2>/dev/null | head -1 | sed "s/^LANG=//" | tr -d '[:space:]')

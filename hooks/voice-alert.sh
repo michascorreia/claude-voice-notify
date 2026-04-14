@@ -8,7 +8,7 @@
 source "$(dirname "${BASH_SOURCE[0]}")/lib/play.sh"
 
 INPUT=$(cat)
-TOOL_NAME=$(echo "$INPUT" | python3 -c "import sys,json; print(json.load(sys.stdin).get('tool_name',''))" 2>/dev/null)
+TOOL_NAME=$(echo "$INPUT" | "$VN_PY" -c "import sys,json; print(json.load(sys.stdin).get('tool_name',''))" 2>/dev/null)
 [ "$TOOL_NAME" != "Bash" ] && exit 0
 
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
@@ -17,13 +17,13 @@ CONFIG_FILE="$PLUGIN_DATA/config.json"
 
 # Feature gate: alerts OFF by default
 if [ -f "$CONFIG_FILE" ]; then
-  ENABLED=$(python3 -c "import json; print(json.load(open('$CONFIG_FILE')).get('features',{}).get('alerts', False))" 2>/dev/null)
+  ENABLED=$("$VN_PY" -c "import json; print(json.load(open('$CONFIG_FILE')).get('features',{}).get('alerts', False))" 2>/dev/null)
   [ "$ENABLED" != "True" ] && exit 0
 else
   exit 0
 fi
 
-LANG_CODE=$(python3 -c "import json; print(json.load(open('$CONFIG_FILE')).get('lang',''))" 2>/dev/null)
+LANG_CODE=$("$VN_PY" -c "import json; print(json.load(open('$CONFIG_FILE')).get('lang',''))" 2>/dev/null)
 if [ -z "$LANG_CODE" ] && [ -f "$PLUGIN_ROOT/config.txt" ]; then
   LANG_CODE=$(grep -E "^LANG=" "$PLUGIN_ROOT/config.txt" 2>/dev/null | head -1 | sed "s/^LANG=//" | tr -d '[:space:]')
 fi
@@ -31,8 +31,8 @@ fi
 
 AUDIO_DIR="$PLUGIN_ROOT/audio/$LANG_CODE"
 
-COMMAND=$(echo "$INPUT" | python3 -c "import sys,json; print(json.load(sys.stdin).get('tool_input',{}).get('command',''))" 2>/dev/null)
-CWD=$(echo "$INPUT" | python3 -c "import sys,json; print(json.load(sys.stdin).get('cwd',''))" 2>/dev/null)
+COMMAND=$(echo "$INPUT" | "$VN_PY" -c "import sys,json; print(json.load(sys.stdin).get('tool_input',{}).get('command',''))" 2>/dev/null)
+CWD=$(echo "$INPUT" | "$VN_PY" -c "import sys,json; print(json.load(sys.stdin).get('cwd',''))" 2>/dev/null)
 
 KEY=""
 case "$COMMAND" in
@@ -74,7 +74,7 @@ AUDIO="$AUDIO_DIR/${KEY}.m4a"
 [ ! -f "$AUDIO" ] && exit 0
 
 PROJ_AUDIO=""
-PROJ_ENABLED=$(python3 -c "import json; print(json.load(open('$CONFIG_FILE')).get('features',{}).get('project_name', False))" 2>/dev/null)
+PROJ_ENABLED=$("$VN_PY" -c "import json; print(json.load(open('$CONFIG_FILE')).get('features',{}).get('project_name', False))" 2>/dev/null)
 if [ "$PROJ_ENABLED" = "True" ] && [ -f "$PLUGIN_DATA/project-name-enabled" ] && [ -n "$CWD" ]; then
   PROJ_AUDIO=$("$PLUGIN_ROOT/hooks/gen-project.sh" "$CWD" "$PLUGIN_ROOT" "$PLUGIN_DATA" "$LANG_CODE" 2>/dev/null)
 fi

@@ -13,13 +13,13 @@ CONFIG_FILE="$PLUGIN_DATA/config.json"
 
 # Feature gate: basic ON by default
 if [ -f "$CONFIG_FILE" ]; then
-  ENABLED=$(python3 -c "import json; print(json.load(open('$CONFIG_FILE')).get('features',{}).get('basic', True))" 2>/dev/null)
+  ENABLED=$("$VN_PY" -c "import json; print(json.load(open('$CONFIG_FILE')).get('features',{}).get('basic', True))" 2>/dev/null)
   [ "$ENABLED" = "False" ] && exit 0
 fi
 
 LANG_CODE=""
 if [ -f "$CONFIG_FILE" ]; then
-  LANG_CODE=$(python3 -c "import json; print(json.load(open('$CONFIG_FILE')).get('lang',''))" 2>/dev/null)
+  LANG_CODE=$("$VN_PY" -c "import json; print(json.load(open('$CONFIG_FILE')).get('lang',''))" 2>/dev/null)
 fi
 if [ -z "$LANG_CODE" ] && [ -f "$PLUGIN_ROOT/config.txt" ]; then
   LANG_CODE=$(grep -E "^LANG=" "$PLUGIN_ROOT/config.txt" 2>/dev/null | head -1 | sed "s/^LANG=//" | tr -d '[:space:]')
@@ -28,8 +28,8 @@ fi
 AUDIO_DIR="$PLUGIN_ROOT/audio/$LANG_CODE"
 
 INPUT=$(cat)
-MESSAGE=$(echo "$INPUT" | python3 -c "import sys,json; print(json.load(sys.stdin).get('message',''))" 2>/dev/null)
-CWD=$(echo "$INPUT" | python3 -c "import sys,json; print(json.load(sys.stdin).get('cwd',''))" 2>/dev/null)
+MESSAGE=$(echo "$INPUT" | "$VN_PY" -c "import sys,json; print(json.load(sys.stdin).get('message',''))" 2>/dev/null)
+CWD=$(echo "$INPUT" | "$VN_PY" -c "import sys,json; print(json.load(sys.stdin).get('cwd',''))" 2>/dev/null)
 
 KEY="attention_generic"
 case "$MESSAGE" in
@@ -42,7 +42,7 @@ AUDIO="$AUDIO_DIR/${KEY}.m4a"
 
 PROJ_AUDIO=""
 if [ -f "$CONFIG_FILE" ]; then
-  PROJ_ENABLED=$(python3 -c "import json; print(json.load(open('$CONFIG_FILE')).get('features',{}).get('project_name', False))" 2>/dev/null)
+  PROJ_ENABLED=$("$VN_PY" -c "import json; print(json.load(open('$CONFIG_FILE')).get('features',{}).get('project_name', False))" 2>/dev/null)
   if [ "$PROJ_ENABLED" = "True" ] && [ -f "$PLUGIN_DATA/project-name-enabled" ] && [ -n "$CWD" ]; then
     PROJ_AUDIO=$("$PLUGIN_ROOT/hooks/gen-project.sh" "$CWD" "$PLUGIN_ROOT" "$PLUGIN_DATA" "$LANG_CODE" 2>/dev/null)
   fi
